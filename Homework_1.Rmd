@@ -1,0 +1,44 @@
+
+
+Homework
+
+```{r}
+
+a <- c(160.1,161.2,162.3,163.4,164.5)
+b <- c(165.6,166.7,167.8,168.9,169.9)
+c <- c(170.8,171.7,172.6,173.5,174.4)
+d <- c(175.3,176.2,177.1,178.3,179.5)
+e <- c(180.8,181.7,182.6,183.4,184.2)
+
+valores <- c(a,b,c,d,e)
+matrix_libras <- matrix(valores, byrow = TRUE , nrow = 5)
+
+#columnas
+meses <-c("enero", "febrero", "marzo", "abril", "mayo")
+#filas
+nombres <-c("Cristian", "Daniel", "Jose", "Pablo", "Juan")
+
+#nombrado de columnas y filas
+colnames(matrix_libras) <- meses
+rownames(matrix_libras) <- nombres
+matrix_libras
+
+#promedio filas
+prom_meses <- rowMeans(matrix_libras)
+#promedio columnas
+prom_nombres <- colMeans(matrix_libras)
+
+#funciones cbind (agregar columna) y rbind (agregar una fila)
+add_prom_meses <- cbind(matrix_libras, prom_meses)
+
+add_prom_nombres <- colMeans(add_prom_meses)
+
+final_matrix <- rbind(add_prom_meses,add_prom_nombres)
+
+#Imprimir matriz
+final_matrix
+
+
+
+```
+
