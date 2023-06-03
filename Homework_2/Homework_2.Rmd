@@ -1,0 +1,22 @@
+Homework 2
+
+Estructura de la Funcion
+
+nombre_de_la_funcion <- function(argumento){
+Cuerpo de la funcion
+Puede haber variables loacles
+
+return(resultado)
+}
+
+```{r}
+x=5
+y=6
+
+suma <- function(x,y){
+  resultado <- x + y
+  return(resultado)
+}
+
+```
+
