@@ -1,0 +1,118 @@
+Homework 3
+
+Investigue cómo leer un archivo CSV desde R.
+
+Asegúrate de reemplazar "ruta_del_archivo.csv" con la ruta y nombre de tu archivo CSV.
+
+La función read.csv() se utiliza cuando el delimitador en el archivo CSV es una coma (,). Si el delimitador es un punto y coma (;), puedes utilizar la función read.csv2() en su lugar.
+
+La función read.csv() devuelve un objeto de tipo data.frame que contiene los datos del archivo CSV. Puedes realizar operaciones y análisis adicionales sobre este objeto según tus necesidades.
+
+Recuerda que, antes de leer un archivo CSV en R, asegúrate de tener el paquete readr o utils instalado en tu entorno R. Puedes instalarlos utilizando el comando install.packages("readr") o install.packages("utils"), respectivamente.
+
+```{r}
+library(gapminder)
+library(dplyr)
+
+# Ruta del archivo CSV
+archivo_csv <- "c:/users/Cristian/downloads/primary_results.csv"
+
+# Leer archivo CSV con delimitador ","
+dataset_results <- read.csv(archivo_csv)
+
+# Leer archivo CSV con delimitador ";"
+# datos <- read.csv2(archivo_csv)
+
+# Imprimir los datos
+print(dataset_results)
+dataset_results
+
+
+```
+Funcion select
+
+Investigue acerca de la función select() de la paquetería de dplyr.
+
+En este ejemplo, creamos un data frame llamado datos con columnas de Nombre, Edad, Ciudad y Salario. Luego utilizamos la función select() para seleccionar solo las columnas Nombre y Salario del data frame. El resultado se almacena en un nuevo data frame llamado datos_seleccionados. Por último, imprimimos el nuevo data frame para ver los resultados.
+```{r}
+# Cargar la paquetería dplyr
+library(dplyr)
+
+# Crear un data frame de ejemplo
+datos <- data.frame(
+  Nombre = c("Juan", "María", "Pedro"),
+  Edad = c(25, 30, 35),
+  Ciudad = c("Madrid", "Barcelona", "Valencia"),
+  Salario = c(3000, 3500, 4000)
+)
+
+# Seleccionar solo las columnas Nombre y Salario
+datos_seleccionados <- select(datos, Nombre, Salario)
+
+
+```
+
+
+1. Filtrar todos los votos del estado de Florida.
+
+```{r}
+dataset_results %>%
+  filter(state == "Florida")
+```
+2.1. Filtrar votos para los candidatos Hillary Clinton o Donald Trump
+2.2. Filtrar votos para el partido Demócrata y el condado Shelby
+2.3. Filtrar votos para el estado de Alabama y que la cantidad de votos sea mayor a
+15000.
+
+
+```{r}
+# 2.1. Filtrar votos para los candidatos Hillary Clinton o Donald Trump
+dataset_results %>%
+  filter(candidate == "Hillary Clinton" | candidate == "Donald Trump")
+
+# 2.2. Filtrar votos para el partido Demócrata y el condado Shelby
+dataset_results %>%
+  filter(party == "Democrat", county == "Shelby")
+
+# 2.3. Filtrar votos para el estado de Alabama y que la cantidad de votos sea mayor a 15000.
+dataset_results %>%
+  filter(state == "Alabama", votes > 15000)
+
+```
+Utilice la función select y arrange para el siguiente filtrado:
+
+3.1. Filtrar votos para el estado de Texas y el condado Denton, seleccionando
+únicamente las columnas party, candidate, votes, luego ordene de forma
+descendente por la columna votes.
+
+```{r}
+dataset_results %>%
+  filter(state == "Texas", county == "Denton") %>%
+  select(party, candidate, votes) %>%
+  arrange(desc(votes))
+  
+```
+
+Utilice el verbo mutate y arrange para el siguiente filtrado:
+4.1. Filtrar por el partido Republicano, que el candidato sea Ted Cruz en el estado de
+Alaska, luego agregue una columna que se llame vote_count que sea la división de
+votes por fraction_votes (votes/fraction_votes), finalmente ordene de forma
+descendente por vote_count.
+
+```{r}
+#mutate (poder cambiar el valor de una columna)
+
+
+dataset_results %>%
+  filter(party == "Republican", candidate == "Ted Cruz", state == "Alaska") %>%
+  mutate(vote_count = votes/fraction_votes) %>%
+  arrange(desc(vote_count))
+  
+
+#utilizar mutate para crear una nueva columna vote_count
+
+#/ dataset_results %>%
+  #/ mutate(vote_count = votes/fraction_votes)
+
+```
+
