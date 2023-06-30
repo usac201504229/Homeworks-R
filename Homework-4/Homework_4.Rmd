@@ -1,0 +1,126 @@
+Homework 4
+
+Construya la variable diamonds que contenga la lectura del CSV, luego explore el data frame con
+la función str( ).
+```{r}
+
+library(tidyverse)
+diamonds <- read_csv('diamonds.csv')
+glimpse(diamonds) #conocer lo que tiene el data set
+
+#Variable diamonds
+diamonds
+
+#Explorar el data frame
+str(diamonds)
+```
+
+1. Dispersion
+
+
+```{r}
+library(ggplot2)
+# Graficas de dispersion y de barras
+
+diamonds
+#1.1
+grafica_dispersion <- ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point()
+
+grafica_dispersion
+
+#1.2 y 1.3
+
+grafica_dispersion_color <- ggplot(diamonds, aes(x=carat, y=price, color=clarity)) +
+  geom_point() 
+  
+grafica_dispersion_color
+
+```
+Histograma
+
+2.1 y 2.2
+```{r}
+diamonds
+# 2.1 bind=40
+histograma <- ggplot(diamonds, aes(x=price)) + geom_histogram(bins=40)
+
+histograma
+
+# 2.2 + escala logaritmica
+histograma_scale <- ggplot(diamonds, aes(x=price)) + geom_histogram(bins=40) +
+  scale_x_log10()
+
+histograma_scale
+```
+
+3. Boxplots
+
+```{r}
+#3.1
+grafica_boxplots <- ggplot(diamonds, aes(x=cut, y=price)) + geom_boxplot() +
+  scale_y_log10() 
+
+grafica_boxplots
+
+#3.2
+color_boxplots <- ggplot(diamonds, aes(x=cut, y=price, fill=cut)) + geom_boxplot() +
+  scale_y_log10() 
+
+color_boxplots
+```
+4 Faceting
+
+```{r}
+#4.1
+filtered_price <- diamonds %>%
+  filter(price > 1000 & cut %in% c("Good", "Ideal", "Premium"))
+
+#4.2
+
+ggplot(filtered_price, aes(x=cut, y=depth)) + geom_col()
+
+#4.3 faceting
+
+ggplot(filtered_price, aes(x=cut, y=depth)) +
+  geom_col() +
+  facet_wrap(~ clarity)
+
+
+#4.4
+ggplot(filtered_price, aes(x=cut, y=depth, fill=clarity)) +
+  geom_col() +
+  facet_wrap(~ clarity)
+
+```
+
+Grouping and summarizing
+
+```{r}
+#1
+median_dimension_diamond <- diamonds %>%
+  group_by(cut) %>%
+  summarize(medianX = median(x), medianY = median(y), medianZ = median(z))
+
+print(median_dimension_diamond)
+```
+
+```{r}
+#2
+cut_premium <- diamonds %>%
+  filter(cut == "Premium") %>%
+  group_by(clarity) %>%
+  summarize(minPrice = max(price), maxPrice = min(price))
+
+print(cut_premium)
+```
+
+```{r}
+#3
+cut_premium
+
+bar_cut_premium <- ggplot(cut_premium, aes(x=clarity, y=maxPrice, fill=clarity)) + geom_col()
+
+print(bar_cut_premium)
+```
+
