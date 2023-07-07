@@ -1,0 +1,189 @@
+Homework 5
+
+Cargue cada set de datos y nombrelo según cada archivo.
+```{r}
+
+library(tidyverse)
+library(dplyr)
+
+questions <- read_csv('questions.csv')
+answers <- read_csv('answers.csv')
+tags <- read_csv('tags.csv')
+question_tags <- read_csv('question_tags.csv')
+
+```
+1. Left-joining questions and tags
+Utilice left_joins en este ejercicio para asegurarse de mantener todas las preguntas, incluso
+aquellas sin un tag correspondiente.
+
+
+1.1. Relacione questions y question_tags usando las columnas id y question_id,
+respectivamente.
+
+```{r}
+questions %>%
+  left_join(question_tags, by=c("id" = "question_id"))
+```
+
+
+1.2. Agregue una relación más para la tabla tags.
+
+```{r}
+questions %>%
+  left_join(question_tags, by=c("id" = "question_id")) %>%
+  left_join(tags, by=c("id"))
+```
+
+
+1.3. Utilice replace_na para cambiar los NA en la columna tag_name a "only-r".
+
+```{r}
+
+questions %>%
+  left_join(question_tags, by=c("id" = "question_id")) %>%
+  left_join(tags, by=c("id")) %>%
+  mutate(tag_name = replace_na(tag_name, "only-r"))
+```
+
+1.4. Por último, almacene el resultado en la variable questions_with_tags.
+
+```{r}
+questions_with_tags <- questions %>%
+  left_join(question_tags, by=c("id" = "question_id")) %>%
+  left_join(tags, by=c("id")) %>%
+  mutate(tag_name = replace_na(tag_name, "only-r"))
+
+questions_with_tags
+```
+2. Comparing scores across tags
+Realice un breve análisis, para ello utilice verbos de la familia dplyr como group by, summarize,
+arrange y averigue el score promedio de las preguntas más frecuentes.
+
+
+2.1. Utilice questions_with_tags y aplique group_by para la variable tag_name.
+
+```{r}
+questions_with_tags %>%
+  group_by(tag_name) 
+```
+
+2.2. Aplique summarize para obtener el score promedio de cada pregunta y asígnele el
+nombre mean_score.
+
+```{r}
+
+mean_score <- questions_with_tags %>%
+  group_by(tag_name) %>%
+  summarize(id_prom = mean(id), creation_date_prom = mean(creation_date), score_prom = mean(score), tag_id_prom = mean(tag_id))
+
+mean_score
+```
+
+2.3. Ordene mean_score en forma descendente.
+
+```{r}
+mean_score %>%
+arrange(desc(mean_score))
+```
+3. Finding gaps between questions and answers
+Ahora uniremos questions con answers. Asegúrese de explorar las tablas y sus columnas en la
+consola antes de comenzar el ejercicio.
+
+3.1. Utilice inner_join para combinar las tablas questions y answers, luego aplique los sufijos
+"_question" y "_answer", respectivamente.
+
+```{r}
+questions
+answers
+
+questions %>%
+  inner_join(answers, by = c("id" = "question_id"), suffix = c("_question", "_answers")) 
+```
+
+3.2. Agregue una nueva columna utilizando la función mutate. La nueva columna se llamará
+gap y contendrá la resta de creation_date_answer y creation_date_question.
+(creation_date_answer - creation_date_question).
+
+```{r}
+#PENDIENTE
+
+questions %>%
+  inner_join(answers, by = c("id" = "question_id"), suffix = c("_question", "_answers"))
+  #mutate(gap = creation_date_answer - creation_date_question)
+
+```
+
+4. Joining question and answer counts
+También podemos determinar cuántas preguntas realmente arrojan respuestas. Si contamos el
+número de respuestas para cada pregunta, podemos unir los conteos de respuestas con la tabla
+de preguntas.
+
+4.1. Cuente y ordene la columna question_id en la tabla de answers, luego almacene el
+resultado en la variable answer_counts.
+
+```{r}
+# left table
+answer_counts <- answers %>%
+  count(question_id) %>%
+  arrange(question_id)
+
+answer_counts
+```
+
+4.2. Relacione la tabla questions con answer_counts (utilice left_join).
+
+```{r}
+questions %>%
+  left_join(answer_counts, by=c("id" = "question_id")) 
+```
+
+4.3. Reemplace los valores NA en la columna n con ceros.
+
+```{r}
+questions %>%
+  left_join(answer_counts, by=c("id" = "question_id")) %>%
+  mutate(n = replace_na(n, 0))
+```
+
+4.4. Por último almacene el resultado en la variable question_answer_counts
+
+```{r}
+question_answer_counts <- questions %>%
+  left_join(answer_counts, by=c("id" = "question_id")) %>%
+  mutate(n = replace_na(n, 0))
+
+question_answer_counts
+```
+
+5. Joining questions, answers, and tags
+Identifiquemos qué temas de R generan más interés en Stack Overflow.
+
+Accede al sitio web de Stack Exchange Data Explorer en: https://data.stackexchange.com/.
+En el cuadro de búsqueda, escribe "Stack Overflow" y selecciona "Stack Overflow" de los resultados.
+Utiliza la siguiente consulta SQL para obtener los temas de R más populares en Stack Overflow:
+
+Haz clic en "Run Query" para ejecutar la consulta.
+La consulta devolverá una tabla con las etiquetas de R más populares en Stack Overflow y el número total de preguntas relacionadas con cada etiqueta. Las etiquetas más populares y con mayor número de preguntas serán las que generan más interés en la comunidad de Stack Overflow en relación con R.
+
+Recuerda que los resultados pueden variar con el tiempo, ya que la popularidad de los temas puede cambiar. Además, ten en cuenta que Stack Overflow es solo una fuente de información y existen otras plataformas y comunidades donde se discuten temas relacionados con R.
+
+
+
+5.1. Combine question_tags con question_answer_counts usando inner_join.
+
+```{r}
+question_tags
+question_answer_counts
+
+question_tags %>%
+  inner_join(question_answer_counts, by = c("question_id" = "id"))
+```
+
+5.2. Ahora, use otro inner_join para agregar la tabla tags.
+
+```{r}
+question_tags %>%
+  inner_join(question_answer_counts, by = c("question_id" = "id"))  %>%
+  inner_join(tags, by = c("tag_id" = "id"))
+```
+
