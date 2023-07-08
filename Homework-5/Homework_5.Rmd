@@ -72,18 +72,19 @@ nombre mean_score.
 
 ```{r}
 
-mean_score <- questions_with_tags %>%
+questions_with_tags %>%
   group_by(tag_name) %>%
-  summarize(id_prom = mean(id), creation_date_prom = mean(creation_date), score_prom = mean(score), tag_id_prom = mean(tag_id))
+  summarize(mean_score = mean(score))
 
-mean_score
 ```
 
 2.3. Ordene mean_score en forma descendente.
 
 ```{r}
-mean_score %>%
-arrange(desc(mean_score))
+questions_with_tags %>%
+  group_by(tag_name) %>%
+  summarize(mean_score = mean(score)) %>%
+  arrange(desc(mean_score))
 ```
 3. Finding gaps between questions and answers
 Ahora uniremos questions con answers. Asegúrese de explorar las tablas y sus columnas en la
@@ -108,8 +109,8 @@ gap y contendrá la resta de creation_date_answer y creation_date_question.
 #PENDIENTE
 
 questions %>%
-  inner_join(answers, by = c("id" = "question_id"), suffix = c("_question", "_answers"))
-  #mutate(gap = creation_date_answer - creation_date_question)
+  inner_join(answers, by = c("id" = "question_id"), suffix = c("_question", "_answers")) %>%
+  mutate(gap = creation_date_answers - creation_date_question)
 
 ```
 
@@ -158,14 +159,14 @@ question_answer_counts
 5. Joining questions, answers, and tags
 Identifiquemos qué temas de R generan más interés en Stack Overflow.
 
-Accede al sitio web de Stack Exchange Data Explorer en: https://data.stackexchange.com/.
+El sitio web de Stack Exchange Data Explorer en: https://data.stackexchange.com/.
 En el cuadro de búsqueda, escribe "Stack Overflow" y selecciona "Stack Overflow" de los resultados.
 Utiliza la siguiente consulta SQL para obtener los temas de R más populares en Stack Overflow:
 
 Haz clic en "Run Query" para ejecutar la consulta.
 La consulta devolverá una tabla con las etiquetas de R más populares en Stack Overflow y el número total de preguntas relacionadas con cada etiqueta. Las etiquetas más populares y con mayor número de preguntas serán las que generan más interés en la comunidad de Stack Overflow en relación con R.
 
-Recuerda que los resultados pueden variar con el tiempo, ya que la popularidad de los temas puede cambiar. Además, ten en cuenta que Stack Overflow es solo una fuente de información y existen otras plataformas y comunidades donde se discuten temas relacionados con R.
+Los resultados pueden variar con el tiempo, ya que la popularidad de los temas puede cambiar. Además, se tiene en cuenta que Stack Overflow es solo una fuente de información y existen otras plataformas y comunidades donde se discuten temas relacionados con R.
 
 
 
